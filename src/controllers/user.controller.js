@@ -6,10 +6,10 @@ import { upload } from "../middlewares/multer.middleware.js";
 import ApiResponse from "../utils/ApiResponse.js";
 
 const registerUser = asyncHandler(async (req, res) => {
-    const { fullname, email, username, passwoed } = req.body;
+    const { fullName, email, username, password } = req?.body;
 
     // check validation is any of the field is empty
-    const isEmpty = [fullname, email, username, passwoed]?.some((field) => {
+    const isEmpty = [fullName, email, username, password]?.some((field) => {
         return field?.trim() === "";
     });
     if (isEmpty) {
@@ -24,7 +24,15 @@ const registerUser = asyncHandler(async (req, res) => {
     }
 
     const avatarLocalPath = req.files?.avatar[0]?.path;
-    const coverImgLocalPath = req.files?.coverImg[0]?.path;
+
+    let coverImgLocalPath;
+    if (
+        req.files &&
+        Array.isArray(req.files?.coverImg) &&
+        req.files?.coverImg.length > 0
+    ) {
+        coverImgLocalPath = req.files?.coverImg[0]?.path;
+    }
 
     if (!avatarLocalPath) {
         throw new ApiError(400, "Avatar Image is required");
@@ -38,16 +46,16 @@ const registerUser = asyncHandler(async (req, res) => {
     }
 
     const user = await User.create({
-        fullname,
-        avatar: avater.url,
+        fullName,
+        avatar: avatar.url,
         coverImg: coverImg?.url || "",
         email,
         password,
         username: username.toLowerCase(),
     });
 
-    const createdUser = User.findById(user?._id).select(
-        "-password -refreshToken"
+    const createdUser = await User.findById(user?._id).select(
+        "-password -refreshToken" // - means except password and refreshToken, rest all feilds are taken.
     );
 
     if (!createdUser) {
