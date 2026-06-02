@@ -4,6 +4,8 @@ import {
     logout,
     refreshAccessToken,
     registerUser,
+    updateUserAvatar,
+    updateUserCoverImg,
 } from "../controllers/user.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
@@ -19,6 +21,14 @@ router.route("/register").post(
 );
 
 router.route("/login").post(loginUser);
+
+router
+    .route("/updateAvatar")
+    .post(verifyJWT, upload.single("avatar"), updateUserAvatar);
+
+router
+    .route("/updateCoverImg")
+    .post(verifyJWT, upload.single("coverImg"), updateUserCoverImg);
 
 // secured route
 router.route("/logout").post(verifyJWT, logout);
