@@ -1,7 +1,21 @@
-import { TextField } from "@mui/material";
+import { IconButton, InputAdornment, TextField } from "@mui/material";
+import { useState } from "react";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 function AppTextField(props) {
-    const { label, error, helperText, type = "text" } = props;
+    const {
+        label,
+        error,
+        helperText,
+        type = "text",
+        slotProps,
+        ...rest
+    } = props;
+
+    const [showPassword, setShowPassword] = useState(false);
+
+    const isPasswordField = type === "password";
 
     return (
         <>
@@ -9,9 +23,40 @@ function AppTextField(props) {
                 fullWidth
                 variant="outlined"
                 label={label}
-                type={type}
+                type={
+                    isPasswordField
+                        ? showPassword
+                            ? "text"
+                            : "password"
+                        : type
+                }
                 error={error}
                 helperText={helperText}
+                slotProps={{
+                    ...slotProps,
+                    input: {
+                        ...slotProps?.input,
+                        endAdornment: isPasswordField ? (
+                            <InputAdornment position="end">
+                                <IconButton
+                                    edge="end"
+                                    onMouseDown={(e) => e.preventDefault()}
+                                    onClick={() =>
+                                        setShowPassword((prev) => !prev)
+                                    }
+                                >
+                                    {showPassword ? (
+                                        <VisibilityIcon />
+                                    ) : (
+                                        <VisibilityOffIcon />
+                                    )}
+                                </IconButton>
+                            </InputAdornment>
+                        ) : (
+                            slotProps?.input?.endAdornment
+                        ),
+                    },
+                }}
                 sx={{
                     "& .MuiInputLabel-root": {
                         color: "#aaaaaa",
@@ -42,7 +87,7 @@ function AppTextField(props) {
                         color: "#ff4e45",
                     },
                 }}
-                {...props}
+                {...rest}
             />
         </>
     );
