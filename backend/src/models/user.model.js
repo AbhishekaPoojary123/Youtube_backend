@@ -28,11 +28,11 @@ const userSchema = new mongoose.Schema(
         avatar: {
             url: {
                 type: String, // cloudinary url
-                required: true,
+                // required: true,
             },
             publicId: {
                 type: String,
-                required: true,
+                // required: true,
             },
         },
         coverImg: {

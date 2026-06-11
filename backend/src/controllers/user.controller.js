@@ -29,6 +29,22 @@ const generateAccessTokenAndRefreshTokens = async (userId) => {
     }
 };
 
+const checkUsername = asyncHandler(async (req, res) => {
+    const { username } = req.params;
+
+    const user = await User.findOne({ username });
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                { available: !user },
+                "Username checked successfully"
+            )
+        );
+});
+
 const registerUser = asyncHandler(async (req, res) => {
     const { fullName, email, username, password } = req?.body;
 
@@ -47,32 +63,36 @@ const registerUser = asyncHandler(async (req, res) => {
         throw new ApiError(408, "User with username or email already exits");
     }
 
-    const avatarLocalPath = req.files?.avatar[0]?.path;
+    const passwordRegex =
+        /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{6,}$/;
 
-    let coverImgLocalPath;
-    if (
-        req.files &&
-        Array.isArray(req.files?.coverImg) &&
-        req.files?.coverImg.length > 0
-    ) {
-        coverImgLocalPath = req.files?.coverImg[0]?.path;
+    if (!passwordRegex.test(password)) {
+        throw new ApiError(
+            400,
+            "Enter a combination of at least six numbers, letters and punctuation marks."
+        );
     }
 
-    if (!avatarLocalPath) {
-        throw new ApiError(400, "Avatar Image is required");
-    }
+    // if (
+    //     req.files &&
+    //     Array.isArray(req.files?.avatar) &&
+    //     req.files?.avatar?.length > 0
+    // ) {
+    //     const avatarLocalPath = req.files?.avatar[0]?.path;
+    //     const avatar = await uploadOnCloudinary(avatarLocalPath);
+    // }
 
-    const avatar = await uploadOnCloudinary(avatarLocalPath);
-    const coverImg = await uploadOnCloudinary(coverImgLocalPath);
-
-    if (!avatar) {
-        throw new ApiError(400, "Avatar is required");
-    }
+    // if (
+    //     req.files &&
+    //     Array.isArray(req.files?.coverImg) &&
+    //     req.files?.coverImg.length > 0
+    // ) {
+    //     const coverImgLocalPath = req.files?.coverImg[0]?.path;
+    //     const coverImg = await uploadOnCloudinary(coverImgLocalPath);
+    // }
 
     const user = await User.create({
         fullName,
-        avatar: { url: avatar.url, publicId: avatar.public_id },
-        coverImg: { url: coverImg?.url || "", publicId: avatar.public_id },
         email,
         password,
         username: username.toLowerCase(),
@@ -459,6 +479,7 @@ const getWatchHistory = asyncHandler(async (req, res) => {
 });
 
 export {
+    checkUsername,
     registerUser,
     loginUser,
     logout,

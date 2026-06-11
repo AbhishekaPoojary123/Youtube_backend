@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
     changeCurrentPassword,
+    checkUsername,
     getCurrentUser,
     getUserChannelProfile,
     getWatchHistory,
@@ -17,13 +18,8 @@ import { verifyJWT } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
-router.route("/register").post(
-    upload.fields([
-        { name: "avatar", maxCount: 1 },
-        { name: "coverImg", maxCount: 1 },
-    ]),
-    registerUser
-);
+router.get("/check-username/:username", checkUsername);
+router.route("/register").post(registerUser);
 router.route("/login").post(loginUser);
 
 // secured route
