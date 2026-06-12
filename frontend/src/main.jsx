@@ -2,9 +2,10 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.jsx";
-import { AuthProvider } from "./context/AuthProvider.jsx";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import theme from "./theme/theme.js";
+import { AuthProvider } from "./context/authContext/AuthProvider.jsx";
+import { SnackbarProvider } from "./context/snackbarContext/SnackbarProvider.jsx";
 
 createRoot(document.getElementById("root")).render(
     <StrictMode>
@@ -12,7 +13,9 @@ createRoot(document.getElementById("root")).render(
             <CssBaseline />
 
             <AuthProvider>
-                <App />
+                <SnackbarProvider>
+                    <App />
+                </SnackbarProvider>
             </AuthProvider>
         </ThemeProvider>
     </StrictMode>
