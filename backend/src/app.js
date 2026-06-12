@@ -22,4 +22,12 @@ import userRouter from "./routes/user.routes.js";
 // router declaration
 app.use("/api/v1/users", userRouter); // http://localhost:8000/api/v1/users/register
 
+app.use((err, req, res, next) => {
+    return res.status(err.statusCode || 500).json({
+        success: false,
+        message: err.message || "Something went wrong",
+        errors: err.errors || [],
+    });
+});
+
 export { app };

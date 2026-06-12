@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { checkUsername, registerUser } from "../authApi";
-import { useAuth } from "../../../context/useAuth";
+import { useAuth } from "../../../context/authContext/useAuth";
 import { useNavigate } from "react-router-dom";
 import AppTextField from "../../../components/common/AppTextField";
 import { Box, Stack, Typography } from "@mui/material";
