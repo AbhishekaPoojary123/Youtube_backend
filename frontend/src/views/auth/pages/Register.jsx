@@ -68,7 +68,10 @@ function Register() {
                     setUsernameError("Username already exists");
                 }
             } catch (error) {
-                showSnackbar();
+                showSnackbar(
+                    error.response?.data?.message || "Something went wrong",
+                    "error"
+                );
             } finally {
                 setCheckingUsername(false);
             }
