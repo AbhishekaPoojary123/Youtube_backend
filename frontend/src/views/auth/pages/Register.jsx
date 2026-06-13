@@ -10,6 +10,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import CircularProgress from "@mui/material/CircularProgress";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ErrorIcon from "@mui/icons-material/Error";
+import { useSnackbar } from "../../../context/snackbarContext/useSnackbar";
 
 function Register() {
     const {
@@ -20,6 +21,8 @@ function Register() {
     } = useForm({ mode: "onTouched" });
 
     const { setUser } = useAuth();
+    const { showSnackbar } = useSnackbar();
+
     const navigate = useNavigate();
 
     const [checkingUsername, setCheckingUsername] = useState(false);
@@ -29,12 +32,19 @@ function Register() {
     const username = watch("username");
 
     const onSubmit = async (data) => {
-        const response = await registerUser(data);
+        try {
+            const response = await registerUser(data);
 
-        setUser(response.data);
+            setUser(response.data);
 
-        // Redirect to login page
-        navigate("/login");
+            // Redirect to login page
+            navigate("/login");
+        } catch (error) {
+            showSnackbar(
+                error.response?.data?.message || "Registration failed",
+                "error"
+            );
+        }
     };
 
     useEffect(() => {
@@ -58,7 +68,10 @@ function Register() {
                     setUsernameError("Username already exists");
                 }
             } catch (error) {
-                console.error(error);
+                showSnackbar(
+                    error.response?.data?.message || "Something went wrong",
+                    "error"
+                );
             } finally {
                 setCheckingUsername(false);
             }
