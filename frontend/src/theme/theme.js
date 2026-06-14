@@ -8,7 +8,17 @@ const theme = createTheme({
         },
         background: {
             default: "#0f0f0f",
-            paper: "#1f1f1f",
+            paper: "#0f0f0f",
+        },
+    },
+    components: {
+        MuiPaper: {
+            styleOverrides: {
+                root: {
+                    backgroundImage: "none",
+                    boxShadow: "none",
+                },
+            },
         },
     },
 });

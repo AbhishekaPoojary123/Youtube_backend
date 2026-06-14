@@ -2,17 +2,20 @@ import { Box, Toolbar } from "@mui/material";
 import { Outlet } from "react-router-dom";
 import { useState } from "react";
 
-import Navbar from "../components/navigation/Navbar";
-import Sidebar from "../components/navigation/Sidebar";
+import ChannelNavbar from "../components/navigation/channelNavigation/ChannelNavbar";
+import ChannelSidebar from "../components/navigation/channelNavigation/ChannelSidebar";
 
 function MainLayout() {
     const [sidebarOpen, setSidebarOpen] = useState(true);
 
     return (
         <Box sx={{ display: "flex" }}>
-            <Navbar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+            <ChannelNavbar
+                sidebarOpen={sidebarOpen}
+                setSidebarOpen={setSidebarOpen}
+            />
 
-            <Sidebar sidebarOpen={sidebarOpen} />
+            <ChannelSidebar sidebarOpen={sidebarOpen} />
 
             <Box
                 component="main"
