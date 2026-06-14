@@ -6,8 +6,8 @@ import {
     Box,
     InputBase,
     Avatar,
-    MenuItem,
     Menu,
+    MenuItem,
     ListItemIcon,
     Divider,
 } from "@mui/material";
@@ -16,13 +16,13 @@ import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import VideoCallIcon from "@mui/icons-material/VideoCall";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
 import PersonIcon from "@mui/icons-material/Person";
 
-function Navbar({ sidebarOpen, setSidebarOpen }) {
+function ChannelNavbar({ sidebarOpen, setSidebarOpen }) {
     const navigate = useNavigate();
 
     const [anchorEl, setAnchorEl] = useState(null);
@@ -204,4 +204,4 @@ function Navbar({ sidebarOpen, setSidebarOpen }) {
     );
 }
 
-export default Navbar;
+export default ChannelNavbar;

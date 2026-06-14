@@ -11,11 +11,14 @@ import HomeIcon from "@mui/icons-material/Home";
 import SubscriptionsIcon from "@mui/icons-material/Subscriptions";
 import HistoryIcon from "@mui/icons-material/History";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import { useNavigate } from "react-router-dom";
 
 const drawerWidth = 240;
 const collapsedWidth = 72;
 
-function Sidebar({ sidebarOpen }) {
+function ChannelSidebar({ sidebarOpen }) {
+    const navigate = useNavigate();
+
     return (
         <Drawer
             variant="permanent"
@@ -43,6 +46,7 @@ function Sidebar({ sidebarOpen }) {
                         justifyContent: sidebarOpen ? "initial" : "center",
                         px: 2.5,
                     }}
+                    onClick={() => navigate("/channel/dashboard")}
                 >
                     <ListItemIcon
                         sx={{
@@ -54,7 +58,7 @@ function Sidebar({ sidebarOpen }) {
                         <HomeIcon />
                     </ListItemIcon>
 
-                    {sidebarOpen && <ListItemText primary="Home" />}
+                    {sidebarOpen && <ListItemText primary="Dashboard" />}
                 </ListItemButton>
 
                 <ListItemButton
@@ -63,6 +67,7 @@ function Sidebar({ sidebarOpen }) {
                         justifyContent: sidebarOpen ? "initial" : "center",
                         px: 2.5,
                     }}
+                    onClick={() => navigate("/channel/profile")}
                 >
                     <ListItemIcon
                         sx={{
@@ -74,7 +79,7 @@ function Sidebar({ sidebarOpen }) {
                         <SubscriptionsIcon />
                     </ListItemIcon>
 
-                    {sidebarOpen && <ListItemText primary="Subscriptions" />}
+                    {sidebarOpen && <ListItemText primary="Profile" />}
                 </ListItemButton>
 
                 <ListItemButton
@@ -121,4 +126,4 @@ function Sidebar({ sidebarOpen }) {
     );
 }
 
-export default Sidebar;
+export default ChannelSidebar;
