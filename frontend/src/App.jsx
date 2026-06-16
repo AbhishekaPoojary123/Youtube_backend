@@ -8,8 +8,8 @@ import Login from "./views/auth/pages/Login";
 import Home from "./views/home/pages/Home";
 import ChannelLayout from "./layouts/ChannelLayout";
 import Channel from "./views/channel/pages/Channel";
-import ChannelProfile from "./views/channel/pages/channelProfile";
 import ChannelDashboard from "./views/channel/pages/ChannelDashboard";
+import ChannelProfile from "./views/channel/pages/ChannelProfile";
 
 function App() {
     return (
@@ -27,12 +27,12 @@ function App() {
                 <Route element={<ChannelLayout />}>
                     <Route path="/channel" element={<Channel />} />
                     <Route
-                        path="/channel/profile"
-                        element={<ChannelProfile />}
-                    />
-                    <Route
                         path="/channel/dashboard"
                         element={<ChannelDashboard />}
+                    />
+                    <Route
+                        path="channel/profile"
+                        element={<ChannelProfile />}
                     />
                 </Route>
             </Routes>
