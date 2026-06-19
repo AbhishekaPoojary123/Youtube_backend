@@ -18,22 +18,52 @@ import { checkUsername } from "../../auth/authApi";
 import { useSnackbar } from "../../../context/snackbarContext/useSnackbar";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ErrorIcon from "@mui/icons-material/Error";
+import { updateUserProfile } from "../channelApi";
 
 function ChannelProfile() {
-    const { handleSubmit, register, watch } = useForm();
+    const { handleSubmit, register, watch, reset } = useForm();
     const { user } = useAuth();
     const { showSnackbar } = useSnackbar();
 
     const [tab, setTab] = useState(0);
+    const [checkingUsername, setCheckingUsername] = useState(false);
+    const [usernameAvailable, setUsernameAvailable] = useState(null);
+    const [selectedAvatar, setSelectedAvatar] = useState(null);
+    const [selectedCoverImg, setSelectedCoverImg] = useState(null);
+
+    useEffect(() => {
+        if (user) {
+            reset({
+                fullName: user?.fullName,
+                username: user?.username,
+            });
+        }
+    }, [user, reset]);
 
     const onSubmit = async (data) => {
-        console.log("data:", data);
+        const formData = new FormData();
+        formData.append("fullName", data.fullName);
+        formData.append("username", data.username);
+
+        try {
+            if (selectedAvatar) {
+                formData.append("avatar", selectedAvatar);
+            }
+
+            if (selectedCoverImg) {
+                formData.append("coverImg", selectedCoverImg);
+            }
+
+            const reponse = await updateUserProfile(formData);
+        } catch (error) {
+            showSnackbar(
+                error?.response?.data?.message || "Something went wrong",
+                "error"
+            );
+        }
     };
 
     const username = watch("username");
-
-    const [checkingUsername, setCheckingUsername] = useState(false);
-    const [usernameAvailable, setUsernameAvailable] = useState(null);
 
     useEffect(() => {
         if (!username || username.length < 3) {
@@ -64,6 +94,14 @@ function ChannelProfile() {
 
         return () => clearTimeout(timer);
     }, [username]);
+
+    const handleAvatarChange = (e) => {
+        setSelectedAvatar(e.target.files[0]);
+    };
+
+    const handleCoverChange = (e) => {
+        setSelectedCoverImg(e.target.files[0]);
+    };
 
     return (
         <Box
@@ -187,11 +225,20 @@ function ChannelProfile() {
                                             : null,
                                     }}
                                 >
-                                    <img
-                                        src={user?.coverImg?.url}
-                                        alt="coverImg"
-                                        style={{ width: 180, height: 120 }}
-                                    />
+                                    {(user?.coverImg?.url ||
+                                        selectedCoverImg) && (
+                                        <img
+                                            src={
+                                                selectedCoverImg
+                                                    ? URL.createObjectURL(
+                                                          selectedCoverImg
+                                                      )
+                                                    : user?.coverImg?.url
+                                            }
+                                            alt="coverImg"
+                                            style={{ width: 180, height: 120 }}
+                                        />
+                                    )}
                                 </Box>
                             </Paper>
 
@@ -216,6 +263,7 @@ function ChannelProfile() {
                                         hidden
                                         type="file"
                                         {...register("coverImg")}
+                                        onChange={handleCoverChange}
                                     />
                                 </Button>
                             </Box>
@@ -257,9 +305,15 @@ function ChannelProfile() {
                                         color: "#fff",
                                     }}
                                 >
-                                    {user?.avatar?.url ? (
+                                    {user?.avatar?.url || selectedAvatar ? (
                                         <img
-                                            src={user?.avatar?.url}
+                                            src={
+                                                selectedAvatar
+                                                    ? URL.createObjectURL(
+                                                          selectedAvatar
+                                                      )
+                                                    : user?.avatar?.url
+                                            }
                                             style={{
                                                 width: 180,
                                                 height: 180,
@@ -297,6 +351,7 @@ function ChannelProfile() {
                                         hidden
                                         type="file"
                                         {...register("avatar")}
+                                        onChange={handleAvatarChange}
                                     />
                                 </Button>
                             </Box>

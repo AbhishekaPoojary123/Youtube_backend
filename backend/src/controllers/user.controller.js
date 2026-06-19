@@ -259,6 +259,67 @@ const getCurrentUser = asyncHandler(async (req, res) => {
         );
 });
 
+const updateUserProfile = asyncHandler(async (req, res) => {
+    const { fullName, username } = req.body;
+
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+        throw new ApiError(404, "User not found");
+    }
+
+    let avatar = user.avatar;
+    let coverImg = user.coverImg;
+
+    if (req.files?.avatar?.[0]) {
+        const avatarLocalPath = req.files.avatar[0].path;
+
+        const uploadedAvatar = await uploadOnCloudinary(avatarLocalPath);
+
+        if (uploadedAvatar) {
+            avatar = {
+                url: uploadedAvatar.secure_url,
+                publicId: uploadedAvatar.public_id,
+            };
+        }
+    }
+
+    // Cover image uploaded?
+    if (req.files?.coverImg?.[0]) {
+        const coverLocalPath = req.files.coverImg[0].path;
+
+        const uploadedCover = await uploadOnCloudinary(coverLocalPath);
+
+        if (uploadedCover) {
+            coverImg = {
+                url: uploadedCover.secure_url,
+                publicId: uploadedCover.public_id,
+            };
+        }
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+        req.user._id,
+        {
+            $set: {
+                fullName: fullName || user.fullName,
+                username: username || user.username,
+                avatar,
+                coverImg,
+            },
+        },
+        {
+            new: true,
+        }
+    ).select("-password -refreshToken");
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(200, updatedUser, "Profile updated successfully")
+        );
+});
+
 const updateAccountDetails = asyncHandler(async (req, res) => {
     const { fullName, email } = req.body;
 
@@ -494,4 +555,5 @@ export {
     updateUserCoverImg,
     getUserChannelProfile,
     getWatchHistory,
+    updateUserProfile,
 };
