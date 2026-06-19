@@ -12,6 +12,7 @@ import {
     updateAccountDetails,
     updateUserAvatar,
     updateUserCoverImg,
+    updateUserProfile,
 } from "../controllers/user.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
@@ -37,5 +38,14 @@ router
     .post(verifyJWT, upload.single("coverImg"), updateUserCoverImg);
 router.route("/c/:username").get(verifyJWT, getUserChannelProfile);
 router.route("/watch-history").post(verifyJWT, getWatchHistory);
+
+router.route("/updateUserProfile").post(
+    verifyJWT,
+    upload.fields([
+        { name: "avatar", maxCount: 1 },
+        { name: "coverImg", maxCount: 1 },
+    ]),
+    updateUserProfile
+);
 
 export default router;
