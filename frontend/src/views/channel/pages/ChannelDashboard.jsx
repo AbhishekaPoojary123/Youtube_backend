@@ -11,6 +11,7 @@ import {
 
 import AppTextField from "../../../components/common/AppTextField";
 import { useForm } from "react-hook-form";
+import { uploadVideo } from "../channelApi";
 
 function ChannelDashboard() {
     const {
@@ -48,101 +49,100 @@ function ChannelDashboard() {
         formData.append("description", data.description || "");
         formData.append("isPublished", true);
 
-        console.log([...formData.entries()]);
+        console.log("formData:", formData);
 
-        // await uploadVideo(formData);
+        for (const [key, value] of formData.entries()) {
+            console.log(key, value);
+        }
+
+        const response = await uploadVideo(formData);
+        console.log(response?.data);
     };
 
     return (
         <>
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <Typography variant="h4" mb={3}>
-                    Channel Dashboard
-                </Typography>
+            <Typography variant="h4" mb={3}>
+                Channel Dashboard
+            </Typography>
 
-                <Button
-                    variant="contained"
-                    onClick={() => videoInputRef.current?.click()}
-                >
-                    Upload Video
-                </Button>
+            <Button
+                variant="contained"
+                onClick={() => videoInputRef.current?.click()}
+            >
+                Upload Video
+            </Button>
 
-                <input
-                    ref={videoInputRef}
-                    hidden
-                    type="file"
-                    accept="video/*"
-                    onChange={handleVideoSelect}
-                />
+            <input
+                ref={videoInputRef}
+                hidden
+                type="file"
+                accept="video/*"
+                onChange={handleVideoSelect}
+            />
 
-                <Dialog
-                    open={open}
-                    onClose={() => setOpen(false)}
-                    maxWidth="sm"
-                    fullWidth
-                >
-                    <form onSubmit={handleSubmit(onSubmit)}>
-                        <DialogTitle>Upload Video</DialogTitle>
+            <Dialog
+                open={open}
+                onClose={() => setOpen(false)}
+                maxWidth="sm"
+                fullWidth
+            >
+                <form onSubmit={handleSubmit(onSubmit)}>
+                    <DialogTitle>Upload Video</DialogTitle>
 
-                        <DialogContent>
-                            <Stack spacing={3} mt={1}>
-                                <Typography>
-                                    Video: {videoFile?.name}
-                                </Typography>
+                    <DialogContent>
+                        <Stack spacing={3} mt={1}>
+                            <Typography>Video: {videoFile?.name}</Typography>
 
-                                <AppTextField
-                                    label="Title"
-                                    {...register("title", {
-                                        required: "Title is required",
-                                    })}
-                                    error={!!errors.title}
-                                    helperText={errors.title?.message}
+                            <AppTextField
+                                label="Title"
+                                {...register("title", {
+                                    required: "Title is required",
+                                })}
+                                error={!!errors.title}
+                                helperText={errors.title?.message}
+                            />
+
+                            <AppTextField
+                                label="Description"
+                                multiline
+                                rows={4}
+                                {...register("description")}
+                            />
+
+                            <Button variant="outlined" component="label">
+                                Upload Thumbnail
+                                <input
+                                    hidden
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) =>
+                                        setThumbnail(e.target.files?.[0])
+                                    }
                                 />
-
-                                <AppTextField
-                                    label="Description"
-                                    multiline
-                                    rows={4}
-                                    {...register("description")}
-                                />
-
-                                <Button variant="outlined" component="label">
-                                    Upload Thumbnail
-                                    <input
-                                        hidden
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={(e) =>
-                                            setThumbnail(e.target.files?.[0])
-                                        }
-                                    />
-                                </Button>
-
-                                {thumbnail && (
-                                    <img
-                                        src={URL.createObjectURL(thumbnail)}
-                                        alt="thumbnail"
-                                        style={{
-                                            width: "100%",
-                                            borderRadius: 8,
-                                        }}
-                                    />
-                                )}
-                            </Stack>
-                        </DialogContent>
-
-                        <DialogActions>
-                            <Button onClick={() => setOpen(false)}>
-                                Cancel
                             </Button>
 
-                            <Button variant="contained" type="submit">
-                                Publish
-                            </Button>
-                        </DialogActions>
-                    </form>
-                </Dialog>
-            </form>
+                            {thumbnail && (
+                                <img
+                                    src={URL.createObjectURL(thumbnail)}
+                                    alt="thumbnail"
+                                    style={{
+                                        width: "100%",
+                                        borderRadius: 8,
+                                    }}
+                                />
+                            )}
+                        </Stack>
+                    </DialogContent>
+
+                    <DialogActions>
+                        <Button onClick={() => setOpen(false)}>Cancel</Button>
+
+                        <Button variant="contained" type="submit">
+                            Publish
+                        </Button>
+                    </DialogActions>
+                </form>
+            </Dialog>
         </>
     );
 }
